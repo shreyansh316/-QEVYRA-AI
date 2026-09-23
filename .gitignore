@@ -35,3 +35,25 @@ htmlcov/
 # Temporary
 tmp/
 temp/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Test / tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
