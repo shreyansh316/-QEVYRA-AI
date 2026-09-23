@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 
+from app.api.routes import auth_router
 from app.core.config import settings
 from app.db.database import AsyncSessionLocal, close_database
 from app.db.redis import close_redis, redis_client
@@ -22,6 +23,8 @@ app = FastAPI(
     description="Backend API for the QEVYRA AI platform.",
     lifespan=lifespan,
 )
+
+app.include_router(auth_router)
 
 
 @app.get("/")
