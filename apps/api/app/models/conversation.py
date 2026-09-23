@@ -1,46 +1,34 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String, func
+from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
 
-class User(Base):
-    __tablename__ = "users"
+class Conversation(Base):
+    __tablename__ = "conversations"
 
     id: Mapped[int] = mapped_column(
         primary_key=True,
         index=True,
     )
 
-    email: Mapped[str] = mapped_column(
-        String(320),
-        unique=True,
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
         index=True,
-        nullable=False,
     )
 
-    password_hash: Mapped[str] = mapped_column(
-        String(255),
+    title: Mapped[str] = mapped_column(
+        String(200),
         nullable=False,
+        default="New conversation",
     )
 
-    full_name: Mapped[str | None] = mapped_column(
-        String(120),
+    system_prompt: Mapped[str | None] = mapped_column(
+        Text,
         nullable=True,
-    )
-
-    is_active: Mapped[bool] = mapped_column(
-        Boolean,
-        default=True,
-        nullable=False,
-    )
-
-    is_verified: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(
@@ -56,9 +44,15 @@ class User(Base):
         nullable=False,
     )
 
-    conversations = relationship(
-        "Conversation",
-        back_populates="user",
+    user = relationship(
+        "User",
+        back_populates="conversations",
+    )
+
+    messages = relationship(
+        "Message",
+        back_populates="conversation",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        order_by="Message.created_at",
     )

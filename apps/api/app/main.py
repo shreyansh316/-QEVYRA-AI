@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.api.routes import auth_router
+from app.api.routes import auth_router, conversations_router
 from app.core.config import settings
 from app.db.database import AsyncSessionLocal, close_database
 from app.db.redis import close_redis, redis_client
@@ -25,7 +25,7 @@ app = FastAPI(
 )
 
 app.include_router(auth_router)
-
+app.include_router(conversations_router)
 
 @app.get("/")
 async def root():
