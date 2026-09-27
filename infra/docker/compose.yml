@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: qevyra-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: qevyra
+      POSTGRES_USER: qevyra
+      POSTGRES_PASSWORD: qevyra_dev_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - qevyra_postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qevyra -d qevyra"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - qevyra-network
+
+  redis:
+    image: redis:8
+    container_name: qevyra-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6380:6379"
+    volumes:
+      - qevyra_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - qevyra-network
+
+volumes:
+  qevyra_postgres_data:
+  qevyra_redis_data:
+
+networks:
+  qevyra-network:
+    name: qevyra-network
+    driver: bridge
